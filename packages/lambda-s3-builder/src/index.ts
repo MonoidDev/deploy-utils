@@ -3,6 +3,11 @@ import { createHash, type BinaryLike } from "node:crypto";
 import { readFile, writeFile } from "node:fs/promises";
 import { relative } from "node:path";
 
+import {
+  LambdaClient,
+  UpdateFunctionCodeCommand,
+} from "@aws-sdk/client-lambda";
+import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import chalk from "chalk";
 import { $ } from "execa";
 import { Glob } from "glob";
@@ -68,7 +73,7 @@ const zipDirectory = async (directory: string): Promise<ZipDirectoryResult> => {
     hash.update(relative(directory, key)).update("/").update(value);
   }
 
-  const name = `${hash.digest().toString("base64").replace("/", "+")}.zip`;
+  const name = `${hash.digest().toString("base64").replaceAll(/\//g, "+")}.zip`;
 
   return {
     zip: await zip.generateAsync({
@@ -101,7 +106,32 @@ export const main = async () => {
 
   info(`Uploading to S3 ${env.AWS_S3_BUCKET}/${name}`);
 
-  await $$`aws s3api put-object --bucket ${env.AWS_S3_BUCKET} --key ${name} --body ${targetName} --no-cli-pager`;
+  // AWS_REGION & credentials are provided from environment variables
+  const s3Client = new S3Client({});
+  const response = await s3Client.send(
+    new PutObjectCommand({
+      Bucket: env.AWS_S3_BUCKET,
+      Key: name,
+      Body: zip,
+    }),
+  );
+
+  info(`Upload result: `, response);
+
+  const client = new LambdaClient({});
+  for (const functionName of env.FUNCTION_NAMES) {
+    info(`Uploading Lambda Function: `, functionName);
+
+    const response = await client.send(
+      new UpdateFunctionCodeCommand({
+        FunctionName: functionName,
+        S3Bucket: env.AWS_S3_BUCKET,
+        S3Key: name,
+      }),
+    );
+
+    info(`Upload ${functionName} result: `, response);
+  }
 };
 
 main();
