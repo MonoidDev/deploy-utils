@@ -1,0 +1,13 @@
+# Lambda S3 Builder
+
+```bash
+AWS_REGION=ap-northeast-1 \
+AWS_ACCESS_KEY_ID=XXX \
+AWS_SECRET_ACCESS_KEY=XXX \
+GIT_PERSONAL_ACCESS_TOKEN=XXX \
+BUILD_COMMAND="pnpm build" \
+BUILD_DIR=BUILD_DIR \
+BUILD_OUTPUT=BUILD_OUTPUT \
+AWS_S3_BUCKET=AWS_S3_BUCKET \
+npx @monoid-dev/lambda-s3-builder
+```
