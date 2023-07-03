@@ -136,12 +136,15 @@ export const main = async () => {
       new GetFunctionCommand({ FunctionName: functionName }),
     );
 
-    new TagResourceCommand({
-      Resource: fn.Configuration?.FunctionArn!,
-      Tags: {
-        commit: `https://github.com/${process.env.CIRCLE_PROJECT_USERNAME}/${process.env.CIRCLE_PROJECT_REPONAME}/commit/${process.env.CIRCLE_SHA1}`,
-      },
-    });
+    await client.send(
+      new TagResourceCommand({
+        Resource: fn.Configuration?.FunctionArn!,
+        Tags: {
+          // TODO: support Github Action
+          commit: `https://github.com/${process.env.CIRCLE_PROJECT_USERNAME}/${process.env.CIRCLE_PROJECT_REPONAME}/commit/${process.env.CIRCLE_SHA1}`,
+        },
+      }),
+    );
 
     info(`Upload ${functionName} result: `, response);
   }
