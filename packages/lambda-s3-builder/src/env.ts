@@ -1,10 +1,11 @@
+import { AWS_CREDENTIALS } from "@monoid-dev/deploy-utils-models";
 import { z } from "zod";
 
-import { CREDENTIALS, TASK } from "./models";
+import { TASK } from "./models";
 
 export const env = z
   .object({
-    ...CREDENTIALS.shape,
+    ...AWS_CREDENTIALS.shape,
     ...TASK.shape,
   })
   .parse(process.env);

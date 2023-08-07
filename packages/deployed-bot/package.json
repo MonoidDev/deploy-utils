@@ -1,6 +1,6 @@
 {
-  "name": "@monoid-dev/lambda-s3-builder",
-  "version": "0.0.7",
+  "name": "@monoid-dev/deployed-bot",
+  "version": "0.0.1",
   "keywords": [],
   "type": "commonjs",
   "bin": "./lib/index.js",
@@ -28,15 +28,17 @@
     "dev": "tsx src/index.ts",
     "build": "tsup src/index.ts --format esm,cjs --splitting -d lib/ && tsc -p tsconfig.build.json",
     "lint": "tsc && eslint ./src --ext .ts,.tsx",
-    "test": "vitest run"
+    "test": "echo 'No tests'"
   },
   "publishConfig": {
     "access": "public"
   },
   "devDependencies": {
+    "@aws-sdk/client-ecs": "^3.385.0",
     "@aws-sdk/client-lambda": "^3.363.0",
     "@aws-sdk/client-s3": "^3.363.0",
-    "@monoid-dev/deploy-utils-models": "workspace:^",
+    "@octokit/rest": "^20.0.1",
+    "@types/aws-lambda": "^8.10.119",
     "@types/node": "^20.3.3",
     "chalk": "^5.3.0",
     "execa": "^7.1.1",
@@ -44,6 +46,11 @@
     "jszip": "^3.10.1",
     "pretty-bytes": "^6.1.0",
     "remeda": "^1.23.0",
+    "tiny-invariant": "^1.3.1",
     "zod": "^3.21.4"
+  },
+  "dependencies": {
+    "@monoid-dev/deploy-utils-models": "workspace:^",
+    "aws-lambda": "^1.0.7"
   }
 }
