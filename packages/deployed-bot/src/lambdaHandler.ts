@@ -7,8 +7,10 @@ import { Octokit } from "@octokit/rest";
 import type { EventBridgeEvent } from "aws-lambda";
 import invariant from "tiny-invariant";
 
-import { env } from "./env";
+import { getSecrets } from "./getSecrets";
 import { Deployment, sendLark } from "./sendLark";
+
+const secretsPromise = getSecrets();
 
 export const lambdaHandler = async (
   event: EventBridgeEvent<"ECS Deployment State Change", any>,
@@ -17,10 +19,12 @@ export const lambdaHandler = async (
     return;
   }
 
+  const secrets = await secretsPromise;
+
   const client = new ECSClient({});
 
   const octokit = new Octokit({
-    auth: env.GITHUB_PERSONAL_TOKEN,
+    auth: secrets.github_personal_token,
   });
 
   // Cluster name is needed for DescribeServices to work.
@@ -90,9 +94,17 @@ export const lambdaHandler = async (
     }
   }
 
-  const larkResponse = await sendLark({ title, deployments, dry: false });
-
-  invariant((await larkResponse?.json()).msg === "success");
+  const larkResponse = await sendLark({
+    title,
+    deployments,
+    dry: false,
+    token: secrets.deployed_bot_target_group_lark_token,
+  });
+  const larkData = await larkResponse?.json();
+  invariant(
+    larkData.msg === "success",
+    `Get invalid response from lark: ${JSON.stringify(larkData)}`,
+  );
 
   return {
     success: true,

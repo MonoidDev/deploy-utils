@@ -26,12 +26,14 @@
   },
   "scripts": {
     "dev": "tsx src/index.ts",
-    "build": "tsup src/index.ts --format esm,cjs --splitting -d lib/ && tsc -p tsconfig.build.json",
+    "build": "tsup src/index.ts -d lib/",
     "lint": "tsc && eslint ./src --ext .ts,.tsx",
     "test": "echo 'No tests'"
   },
   "private": true,
   "devDependencies": {
-    "@monoid-dev/deployed-bot": "workspace:^"
+    "@monoid-dev/deployed-bot": "workspace:^",
+    "@types/node-fetch": "^2.6.4",
+    "node-fetch": "^3.3.2"
   }
 }
