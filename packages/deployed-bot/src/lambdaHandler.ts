@@ -42,12 +42,14 @@ export const lambdaHandler = async (
 
   invariant(response.services, "services cannot be undefined");
 
+  const serviceNames = response.services.map((s) => s.serviceName).join(", ");
+
   const title =
     event.detail.eventName === "SERVICE_DEPLOYMENT_IN_PROGRESS"
-      ? "[INFO] D2D Backend: Deploying..."
+      ? `[INFO] D2D Backend: ${serviceNames} deploying...`
       : event.detail.eventName === "SERVICE_DEPLOYMENT_COMPLETED"
-      ? "[SUCCESS] D2D Backend: Services Deployed!"
-      : "[ERROR] D2D Backend: Deployment Failed!";
+      ? `[SUCCESS] D2D Backend: ${serviceNames} deployed!`
+      : `[ERROR] D2D Backend: ${serviceNames} Failed!`;
 
   const deployments: Deployment[] = [];
 
