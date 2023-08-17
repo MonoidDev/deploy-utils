@@ -1,6 +1,6 @@
 {
   "name": "@monoid-dev/deployed-bot",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "keywords": [],
   "type": "commonjs",
   "bin": "./lib/index.js",
