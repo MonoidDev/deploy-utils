@@ -2,6 +2,7 @@ import { z } from "zod";
 
 export const env = z
   .object({
+    PROJECT_NAME: z.string(),
     SECRET_ID: z.string(),
   })
   .parse(process.env);

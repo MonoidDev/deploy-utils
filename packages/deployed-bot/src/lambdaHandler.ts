@@ -8,6 +8,7 @@ import type { EventBridgeEvent } from "aws-lambda";
 import invariant from "tiny-invariant";
 
 import { getSecrets } from "./getSecrets";
+import { env } from "./models";
 import { Deployment, sendLark } from "./sendLark";
 
 const secretsPromise = getSecrets();
@@ -46,10 +47,10 @@ export const lambdaHandler = async (
 
   const title =
     event.detail.eventName === "SERVICE_DEPLOYMENT_IN_PROGRESS"
-      ? `[INFO] D2D Backend: ${serviceNames} deploying...`
+      ? `[INFO] ${env.PROJECT_NAME}: ${serviceNames} deploying...`
       : event.detail.eventName === "SERVICE_DEPLOYMENT_COMPLETED"
-      ? `[SUCCESS] D2D Backend: ${serviceNames} deployed!`
-      : `[ERROR] D2D Backend: ${serviceNames} Failed!`;
+      ? `[SUCCESS] ${env.PROJECT_NAME}: ${serviceNames} deployed!`
+      : `[ERROR] ${env.PROJECT_NAME}: ${serviceNames} Failed!`;
 
   const deployments: Deployment[] = [];
 
@@ -78,8 +79,9 @@ export const lambdaHandler = async (
         `Unhandled tag: ${JSON.stringify(tag)}`,
       );
 
-      // Guess the repo name to be `serviceName`
-      const repo = service.serviceName;
+      const repo =
+        service.tags?.find((t) => t.key === "repository")?.value ??
+        service.serviceName;
 
       const commit = await octokit.rest.repos.getCommit({
         repo,
