@@ -98,6 +98,8 @@ export const main = async () => {
 
   const { name, zip } = await zipDirectory(env.BUILD_OUTPUT);
 
+  const s3Key = `${env.AWS_S3_DIR ?? env.FUNCTION_NAMES.join("-")}/${name}`;
+
   const targetName = `/tmp/${name}`;
 
   await writeFile(targetName, zip);
@@ -106,14 +108,14 @@ export const main = async () => {
 
   info(`Executing BUILD_COMMAND ${JSON.stringify(env.BUILD_COMMAND)}...`);
 
-  info(`Uploading to S3 ${env.AWS_S3_BUCKET}/${name}`);
+  info(`Uploading to S3 ${env.AWS_S3_BUCKET}/${s3Key}`);
 
   // AWS_REGION & credentials are provided from environment variables
   const s3Client = new S3Client({});
   const response = await s3Client.send(
     new PutObjectCommand({
       Bucket: env.AWS_S3_BUCKET,
-      Key: name,
+      Key: s3Key,
       Body: zip,
     }),
   );
@@ -128,7 +130,7 @@ export const main = async () => {
       new UpdateFunctionCodeCommand({
         FunctionName: functionName,
         S3Bucket: env.AWS_S3_BUCKET,
-        S3Key: name,
+        S3Key: s3Key,
       }),
     );
 
