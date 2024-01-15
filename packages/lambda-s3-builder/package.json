@@ -1,6 +1,6 @@
 {
   "name": "@monoid-dev/lambda-s3-builder",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "keywords": [],
   "type": "commonjs",
   "bin": "./lib/index.js",
@@ -26,6 +26,7 @@
   },
   "scripts": {
     "dev": "tsx src/index.ts",
+    "prepare": "pnpm build",
     "build": "tsup src/index.ts --format esm,cjs --splitting -d lib/ && tsc -p tsconfig.build.json",
     "lint": "tsc && eslint ./src --ext .ts,.tsx",
     "test": "vitest run"
