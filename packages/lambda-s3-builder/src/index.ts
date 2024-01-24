@@ -6,8 +6,6 @@ import { relative } from "node:path";
 import {
   LambdaClient,
   UpdateFunctionCodeCommand,
-  TagResourceCommand,
-  GetFunctionCommand,
 } from "@aws-sdk/client-lambda";
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import chalk from "chalk";
@@ -131,20 +129,6 @@ export const main = async () => {
         FunctionName: functionName,
         S3Bucket: env.AWS_S3_BUCKET,
         S3Key: s3Key,
-      }),
-    );
-
-    const fn = await client.send(
-      new GetFunctionCommand({ FunctionName: functionName }),
-    );
-
-    await client.send(
-      new TagResourceCommand({
-        Resource: fn.Configuration?.FunctionArn!,
-        Tags: {
-          // TODO: support Github Action
-          commit: `https://github.com/${process.env.CIRCLE_PROJECT_USERNAME}/${process.env.CIRCLE_PROJECT_REPONAME}/commit/${process.env.CIRCLE_SHA1}`,
-        },
       }),
     );
 
