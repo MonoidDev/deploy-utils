@@ -17,6 +17,7 @@ Only NodeJS. AWS JavaScript SDK is used, so AWS cli is not needed.
 
 ```bash
 AWS_REGION=ap-northeast-1 \
+AWS_S3_DIR=fn1/ \
 AWS_ACCESS_KEY_ID=XXX \
 AWS_SECRET_ACCESS_KEY=XXX \
 GIT_PERSONAL_ACCESS_TOKEN=XXX \
